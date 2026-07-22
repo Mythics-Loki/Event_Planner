@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template_string, request, redirect, url_for
+from flask import Flask, render_template_string, request, redirect, url_for, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
@@ -72,6 +72,7 @@ HOGWARTS_CASTLE_CSS = """
         overflow-x: hidden;
     }
     
+    /* Fullscreen Background Video */
     #bg-video {
         position: fixed;
         top: 0;
@@ -82,6 +83,7 @@ HOGWARTS_CASTLE_CSS = """
         z-index: -2;
     }
 
+    /* Minimal Dark Overlay for Contrast */
     .video-overlay {
         position: fixed;
         top: 0;
@@ -101,6 +103,7 @@ HOGWARTS_CASTLE_CSS = """
     .navbar h1 { color: var(--candle-gold); margin: 0; font-size: 26px; text-transform: uppercase; }
     .container { max-width: 900px; margin: 40px auto; padding: 0 20px; position: relative; z-index: 1; }
     
+    /* PURELY TRANSPARENT CARD CONTAINER */
     .card { 
         background: transparent; 
         border-radius: 12px; 
@@ -117,6 +120,7 @@ HOGWARTS_CASTLE_CSS = """
         margin-top: 25px;
     }
 
+    /* PURELY TRANSPARENT BUTTONS (NO BLUR, NO BACKGROUND) */
     .house-btn {
         padding: 25px 15px;
         border-radius: 10px;
@@ -134,9 +138,10 @@ HOGWARTS_CASTLE_CSS = """
     }
     .house-btn:hover { 
         transform: translateY(-4px); 
-        background: rgba(255, 255, 255, 0.15); 
+        background: rgba(255, 255, 255, 0.15); /* Light glow on hover */
     }
 
+    /* Minimal Sharp Colored Borders */
     .gryffindor { border: 2px solid #EEBA30; }
     .slytherin { border: 2px solid #BDC3C7; }
     .hufflepuff { border: 2px solid #D4AF37; }
@@ -226,8 +231,9 @@ INDEX_HTML = f"""
     {HOGWARTS_CASTLE_CSS}
 </head>
 <body>
+    <!-- Background Video directly from root directory -->
     <video autoplay loop muted playsinline id="bg-video">
-        <source src="{{{{ url_for('static', filename='background.mp4') }}}}" type="video/mp4">
+        <source src="/background.mp4" type="video/mp4">
         Your browser does not support HTML5 video.
     </video>
     <div class="video-overlay"></div>
@@ -679,6 +685,10 @@ INVOICE_PRINT_HTML = """
 # ==============================================================================
 # ROUTE HANDLERS
 # ==============================================================================
+@app.route('/background.mp4')
+def serve_video():
+    return send_from_directory(basedir, 'background.mp4')
+
 @app.route('/')
 def index():
     return render_template_string(INDEX_HTML)
